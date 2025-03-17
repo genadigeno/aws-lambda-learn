@@ -6,24 +6,40 @@ import com.syndicate.deployment.annotations.lambda.LambdaHandler;
 import com.syndicate.deployment.model.RetentionSetting;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @LambdaHandler(
-    lambdaName = "hello_world_02",
-	roleName = "hello_world_02-role",
+    lambdaName = "hello_world2",
+	roleName = "hello_world2-role",
 	isPublishVersion = true,
 	aliasName = "${lambdas_alias_name}",
 	logsExpiration = RetentionSetting.SYNDICATE_ALIASES_SPECIFIED
 )
-public class HelloWorld02 implements RequestHandler<Object, Map<String, Object>> {
+public class HelloWorld2 implements RequestHandler<Object, Map<String, Object>> {
 
 	public Map<String, Object> handleRequest(Object request, Context context) {
 		System.out.println("Hello from lambda");
 		System.out.println(request);
 		System.out.println(request.getClass());
+		String message;
+		int statusCode;
+
+		Map<String, Object> requestMap = (Map<String, Object>) request;
+		String path = (String) requestMap.get("path");
+
+		if ("/hello".equals(path)) {
+			statusCode = 200;
+			message = "Hello from Lambda";
+		} else {
+			statusCode = 400;
+			message = "Bad request syntax or unsupported method. Request path: {path}. HTTP method: {method}";
+		}
+
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		resultMap.put("statusCode", 200);
-		resultMap.put("message", "Hello from Lambda");
+		resultMap.put("statusCode", statusCode);
+		resultMap.put("message", message);
 		return resultMap;
 	}
+
 }
