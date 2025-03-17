@@ -20,15 +20,13 @@ public class HelloWorld2 implements RequestHandler<Object, Map<String, Object>> 
 
 	public Map<String, Object> handleRequest(Object request, Context context) {
 		System.out.println("Hello from lambda");
-		System.out.println(request);
-		System.out.println(request.getClass());
 		String message;
 		int statusCode;
 
-		Map<String, Object> requestMap = (Map<String, Object>) request;
-		String path = (String) requestMap.get("path");
+		Map requestMap = (Map) request;
+		Object path = requestMap.get("path");
 
-		if ("/hello".equals(path)) {
+		if (path != null && "/hello".equals(path.toString())) {
 			statusCode = 200;
 			message = "Hello from Lambda";
 		} else {
